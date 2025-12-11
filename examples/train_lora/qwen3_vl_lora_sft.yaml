@@ -1,0 +1,55 @@
+### model
+model_name_or_path: /sds_wangby/models/Qwen3-VL-8B-Instruct
+# image_max_pixels: 262144
+image_max_pixels: 1003520
+video_max_pixels: 16384
+trust_remote_code: true
+
+### method
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_rank: 8
+lora_alpha: 16    ## add
+lora_target: all
+seed: 42
+enable_thinking: false
+
+freeze_vision_tower: true            ## add
+freeze_multi_modal_projector: true   ## add
+
+### dataset
+dataset: amazon_rating_data  # video: mllm_video_demo
+eval_dataset: amazon_rating_val
+template: qwen3_vl_nothink
+cutoff_len: 2048
+# max_samples: 1000
+overwrite_cache: true
+preprocessing_num_workers: 16
+dataloader_num_workers: 32
+
+### output
+output_dir: saves/qwen3_vl-8b/lora/sft
+logging_steps: 10
+save_steps: 200
+plot_loss: true
+overwrite_output_dir: true
+save_only_model: false
+report_to: wandb  # choices: [none, wandb, tensorboard, swanlab, mlflow]
+
+### train
+per_device_train_batch_size: 4
+gradient_accumulation_steps: 1
+learning_rate: 1.0e-4
+num_train_epochs: 3.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+bf16: true
+ddp_timeout: 180000000
+resume_from_checkpoint: null
+
+## eval
+# val_size: 0.1
+per_device_eval_batch_size: 4
+eval_strategy: steps
+eval_steps: 250
